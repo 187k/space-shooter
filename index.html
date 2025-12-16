@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css">
+    <title>Space Shooter</title>
+
+</head>
+<body>
+<div class="game-page">
+    <h1>SPACE SHOOTER</h1>
+    <p class="subtitle">
+        Расширенная версия: несколько типов врагов, бонусы, взрывы и щит. Всё — в одном HTML‑файле.
+    </p>
+
+    <div class="card">
+        <div class="left-panel">
+            <h2 style="font-size: 18px; margin: 0 0 8px;">Как играть</h2>
+            <div class="instructions">
+                <p>
+                    Управляй кораблём, уклоняйся от вражеских выстрелов и сбивай волны противников.
+                    Некоторые враги быстрые, другие — тяжёлые и стреляют по тебе.
+                </p>
+                <p>
+                    Движение: <kbd>A</kbd> / <kbd>D</kbd> или <kbd>←</kbd> / <kbd>→</kbd><br />
+                    Огонь: <kbd>Пробел</kbd> или <kbd>W</kbd> / <kbd>↑</kbd><br />
+                    Перезапуск после поражения: <kbd>Enter</kbd> или <kbd>Пробел</kbd>
+                </p>
+                <p>
+                    Бонусы:
+                    <br />• <kbd>R</kbd> — скорострельность
+                    <br />• <kbd>S</kbd> — тройной выстрел
+                    <br />• Щит — дополнительная защита (поглощает один урон)
+                </p>
+                <p>
+                    Попробуй набрать максимум очков и прожить как можно дольше.
+                </p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="canvas-wrapper">
+                <canvas id="game" width="480" height="720"></canvas>
+
+                <div class="hud-overlay">
+                    <div class="hud-top">
+                        <div class="badge">Счёт: <span id="score">0</span></div>
+                        <div class="badge">Жизни: <span id="lives">3</span></div>
+                        <div class="badge">Щит: <span id="shield">0</span></div>
+                    </div>
+                    <div class="hud-bottom">
+                        <span id="buffs">
+                            Собирай бонусы: R — скорострельность, S — тройной выстрел, щит — доп. защита.
+                        </span>
+                    </div>
+
+                    <div id="gameOver" class="game-over-banner">
+                        <div class="game-over-title">Игра окончена</div>
+                        <div class="game-over-score">
+                            Твой счёт: <span id="finalScore">0</span>
+                        </div>
+                        <div class="game-over-hint">
+                            Нажми <kbd>Enter</kbd> или <kbd>Пробел</kbd>,<br />
+                            или коснись экрана, чтобы сыграть ещё раз
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        HTML5 Canvas‑игра с несколькими типами врагов, бонусами и визуальными эффектами.
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
