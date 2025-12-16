@@ -1,0 +1,56 @@
+
+name: Deploy to Yandex Cloud (Hardcore Mode)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # 1. Устанавливаем YC CLI ВРУЧНУЮ (без плагинов, через curl)
+    # Это сработает 100%, так как мы качаем файл напрямую
+    - name: Install YC CLI Manually
+      run: |
+        curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        echo "/home/runner/yandex-cloud/bin" >> $GITHUB_PATH
+
+    # 2. Авторизуемся через твой JSON-ключ
+    - name: Auth in Yandex Cloud
+      run: |
+        echo '${{ secrets.YC_SA_JSON_CREDENTIALS }}' > sa-key.json
+        yc config profile create sa-profile
+        yc config set service-account-key sa-key.json
+
+    # 3. Сборка и отправка (Login делаем через консоль yc)
+    - name: Build and Push Docker Image
+      env:
+        CR_REGISTRY: crpv4e5cvq4tkoas7j2f  # <--- ВСТАВЬ СЮДА ID РЕЕСТРА !!!
+        CR_REPOSITORY: space-shooter
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        yc container registry configure-docker
+        docker build -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG .
+        docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
+    # 4. Установка kubectl (этот плагин от Azure работает всегда)
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+
+    # 5. Деплой (Подключение через ID кластера)
+    - name: Deploy to K8s
+      env:
+        CR_REGISTRY: crpv4e5cvq4tkoas7j2f  # <--- ВСТАВЬ СЮДА ID РЕЕСТРА !!!
+        CR_REPOSITORY: space-shooter
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Получаем доступ к кластеру
+        yc managed-kubernetes cluster get-credentials --id catsgbvhu2g74tmhnotk --external --force
+        
+        # Меняем картинку и деплоим
+        sed -i "s|IMAGE_PLACEHOLDER|cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG|g" k8s/deployment.yaml
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
