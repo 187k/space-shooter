@@ -1,0 +1,20 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: space-shooter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: space
+  template:
+    metadata:
+      labels:
+        app: space
+    spec:
+      containers:
+      - name: space
+        image: IMAGE_PLACEHOLDER
+        ports:
+        - containerPort: 80
